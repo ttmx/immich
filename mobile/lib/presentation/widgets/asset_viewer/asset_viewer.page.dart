@@ -20,7 +20,6 @@ import 'package:immich_mobile/presentation/widgets/asset_viewer/bottom_bar.widge
 import 'package:immich_mobile/presentation/widgets/asset_viewer/bottom_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/top_app_bar.widget.dart';
 import 'package:immich_mobile/presentation/widgets/asset_viewer/video_viewer.widget.dart';
-import 'package:immich_mobile/presentation/widgets/asset_viewer/activities_bottom_sheet.widget.dart';
 import 'package:immich_mobile/presentation/widgets/images/image_provider.dart';
 import 'package:immich_mobile/presentation/widgets/images/thumbnail.widget.dart';
 import 'package:immich_mobile/providers/asset_viewer/is_motion_video_playing.provider.dart';
@@ -419,7 +418,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
 
     if (event is ViewerOpenBottomSheetEvent) {
       final extent = _kBottomSheetMinimumExtent + 0.3;
-      _openBottomSheet(scaffoldContext!, extent: extent, activitiesMode: event.activitiesMode);
+      _openBottomSheet(scaffoldContext!, extent: extent);
       final offset = _getVerticalOffsetForBottomSheet(extent);
       viewController?.position = Offset(0, -offset);
       return;
@@ -461,7 +460,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
     });
   }
 
-  void _openBottomSheet(BuildContext ctx, {double extent = _kBottomSheetMinimumExtent, bool activitiesMode = false}) {
+  void _openBottomSheet(BuildContext ctx, {double extent = _kBottomSheetMinimumExtent}) {
     ref.read(assetViewerProvider.notifier).setBottomSheet(true);
     initialScale = viewController?.scale;
     // viewController?.updateMultiple(scale: (viewController?.scale ?? 1.0) + 0.01);
@@ -475,9 +474,7 @@ class _AssetViewerState extends ConsumerState<AssetViewer> {
       builder: (_) {
         return NotificationListener<Notification>(
           onNotification: _onNotification,
-          child: activitiesMode
-              ? ActivitiesBottomSheet(controller: bottomSheetController, initialChildSize: extent)
-              : AssetDetailBottomSheet(controller: bottomSheetController, initialChildSize: extent),
+          child: AssetDetailBottomSheet(controller: bottomSheetController, initialChildSize: extent),
         );
       },
     );

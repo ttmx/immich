@@ -93,8 +93,7 @@ ENV LD_PRELOAD=/usr/lib/libmimalloc.so.2 \
     MACHINE_LEARNING_MODEL_ARENA=false
 
 RUN apt-get update && \
-    # Pascal support was dropped in 9.11
-    apt-get install --no-install-recommends -yqq libcudnn9-cuda-12=9.10.2.21-1 && \
+    apt-get install --no-install-recommends -yqq libcudnn9-cuda-12 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

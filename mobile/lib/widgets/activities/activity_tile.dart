@@ -9,9 +9,8 @@ import 'package:immich_mobile/widgets/common/user_circle_avatar.dart';
 
 class ActivityTile extends HookConsumerWidget {
   final Activity activity;
-  final bool isBottomSheet;
 
-  const ActivityTile(this.activity, {super.key, this.isBottomSheet = false});
+  const ActivityTile(this.activity, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,23 +18,21 @@ class ActivityTile extends HookConsumerWidget {
     final isLike = activity.type == ActivityType.like;
     // Asset thumbnail is displayed when we are accessing activities from the album page
     // currentAssetProvider will not be set until we open the gallery viewer
-    final showAssetThumbnail = asset == null && activity.assetId != null && !isBottomSheet;
+    final showAssetThumbnail = asset == null && activity.assetId != null;
 
     return ListTile(
       minVerticalPadding: 15,
       leading: isLike
           ? Container(
-              width: isBottomSheet ? 30 : 44,
+              width: 44,
               alignment: Alignment.center,
               child: Icon(Icons.favorite_rounded, color: Colors.red[700]),
             )
-          : isBottomSheet
-          ? UserCircleAvatar(user: activity.user, size: 30, radius: 15)
           : UserCircleAvatar(user: activity.user),
       title: _ActivityTitle(
         userName: activity.user.name,
         createdAt: activity.createdAt.timeAgo(),
-        leftAlign: isBottomSheet ? false : (isLike || showAssetThumbnail),
+        leftAlign: isLike || showAssetThumbnail,
       ),
       // No subtitle for like, so center title
       titleAlignment: !isLike ? ListTileTitleAlignment.top : ListTileTitleAlignment.center,

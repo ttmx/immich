@@ -1,22 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:immich_mobile/models/server_info/server_config.model.dart';
 import 'package:immich_mobile/models/server_info/server_disk_info.model.dart';
 import 'package:immich_mobile/models/server_info/server_features.model.dart';
 import 'package:immich_mobile/models/server_info/server_version.model.dart';
-
-enum VersionStatus {
-  upToDate,
-  clientOutOfDate,
-  serverOutOfDate,
-  error;
-
-  String get message => switch (this) {
-    VersionStatus.upToDate => "",
-    VersionStatus.clientOutOfDate => "app_update_available".tr(),
-    VersionStatus.serverOutOfDate => "server_update_available".tr(),
-    VersionStatus.error => "unable_to_check_version".tr(),
-  };
-}
 
 class ServerInfo {
   final ServerVersion serverVersion;
@@ -24,7 +9,9 @@ class ServerInfo {
   final ServerFeatures serverFeatures;
   final ServerConfig serverConfig;
   final ServerDiskInfo serverDiskInfo;
-  final VersionStatus versionStatus;
+  final bool isVersionMismatch;
+  final bool isNewReleaseAvailable;
+  final String versionMismatchErrorMessage;
 
   const ServerInfo({
     required this.serverVersion,
@@ -32,7 +19,9 @@ class ServerInfo {
     required this.serverFeatures,
     required this.serverConfig,
     required this.serverDiskInfo,
-    required this.versionStatus,
+    required this.isVersionMismatch,
+    required this.isNewReleaseAvailable,
+    required this.versionMismatchErrorMessage,
   });
 
   ServerInfo copyWith({
@@ -41,7 +30,9 @@ class ServerInfo {
     ServerFeatures? serverFeatures,
     ServerConfig? serverConfig,
     ServerDiskInfo? serverDiskInfo,
-    VersionStatus? versionStatus,
+    bool? isVersionMismatch,
+    bool? isNewReleaseAvailable,
+    String? versionMismatchErrorMessage,
   }) {
     return ServerInfo(
       serverVersion: serverVersion ?? this.serverVersion,
@@ -49,13 +40,15 @@ class ServerInfo {
       serverFeatures: serverFeatures ?? this.serverFeatures,
       serverConfig: serverConfig ?? this.serverConfig,
       serverDiskInfo: serverDiskInfo ?? this.serverDiskInfo,
-      versionStatus: versionStatus ?? this.versionStatus,
+      isVersionMismatch: isVersionMismatch ?? this.isVersionMismatch,
+      isNewReleaseAvailable: isNewReleaseAvailable ?? this.isNewReleaseAvailable,
+      versionMismatchErrorMessage: versionMismatchErrorMessage ?? this.versionMismatchErrorMessage,
     );
   }
 
   @override
   String toString() {
-    return 'ServerInfo(serverVersion: $serverVersion, latestVersion: $latestVersion, serverFeatures: $serverFeatures, serverConfig: $serverConfig, serverDiskInfo: $serverDiskInfo, versionStatus: $versionStatus)';
+    return 'ServerInfo(serverVersion: $serverVersion, latestVersion: $latestVersion, serverFeatures: $serverFeatures, serverConfig: $serverConfig, serverDiskInfo: $serverDiskInfo, isVersionMismatch: $isVersionMismatch, isNewReleaseAvailable: $isNewReleaseAvailable, versionMismatchErrorMessage: $versionMismatchErrorMessage)';
   }
 
   @override
@@ -68,7 +61,9 @@ class ServerInfo {
         other.serverFeatures == serverFeatures &&
         other.serverConfig == serverConfig &&
         other.serverDiskInfo == serverDiskInfo &&
-        other.versionStatus == versionStatus;
+        other.isVersionMismatch == isVersionMismatch &&
+        other.isNewReleaseAvailable == isNewReleaseAvailable &&
+        other.versionMismatchErrorMessage == versionMismatchErrorMessage;
   }
 
   @override
@@ -78,6 +73,8 @@ class ServerInfo {
         serverFeatures.hashCode ^
         serverConfig.hashCode ^
         serverDiskInfo.hashCode ^
-        versionStatus.hashCode;
+        isVersionMismatch.hashCode ^
+        isNewReleaseAvailable.hashCode ^
+        versionMismatchErrorMessage.hashCode;
   }
 }

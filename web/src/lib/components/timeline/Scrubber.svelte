@@ -141,18 +141,14 @@
   };
 
   const calculateSegments = (months: ScrubberMonth[]) => {
-    let verticalSpanWithoutLabel = 0;
-    let verticalSpanWithoutDot = 0;
+    let height = 0;
+    let dotHeight = 0;
 
     let segments: Segment[] = [];
     let previousLabeledSegment: Segment | undefined;
 
     let top = 0;
-
-    // Process months in reverse order to pick labels, then reverse for display
-    const reversed = [...months].reverse();
-
-    for (const scrubMonth of reversed) {
+    for (const [i, scrubMonth] of months.entries()) {
       const scrollBarPercentage = scrubMonth.height / timelineFullHeight;
 
       const segment = {
@@ -166,26 +162,25 @@
         hasDot: false,
       };
       top += segment.height;
-      if (previousLabeledSegment) {
-        if (previousLabeledSegment.year !== segment.year && verticalSpanWithoutLabel > MIN_YEAR_LABEL_DISTANCE) {
-          verticalSpanWithoutLabel = 0;
-          segment.hasLabel = true;
-          previousLabeledSegment = segment;
-        }
-        if (segment.height > 5 && verticalSpanWithoutDot > MIN_DOT_DISTANCE) {
-          segment.hasDot = true;
-          verticalSpanWithoutDot = 0;
-        }
-      } else {
+      if (i === 0) {
         segment.hasDot = true;
         segment.hasLabel = true;
         previousLabeledSegment = segment;
+      } else {
+        if (previousLabeledSegment?.year !== segment.year && height > MIN_YEAR_LABEL_DISTANCE) {
+          height = 0;
+          segment.hasLabel = true;
+          previousLabeledSegment = segment;
+        }
+        if (segment.height > 5 && dotHeight > MIN_DOT_DISTANCE) {
+          segment.hasDot = true;
+          dotHeight = 0;
+        }
+        height += segment.height;
       }
-      verticalSpanWithoutLabel += segment.height;
-      verticalSpanWithoutDot += segment.height;
+      dotHeight += segment.height;
       segments.push(segment);
     }
-    segments.reverse();
 
     return segments;
   };
@@ -581,7 +576,7 @@
     >
       {#if !usingMobileDevice}
         {#if segment.hasLabel}
-          <div class="absolute end-5 text-[12px] dark:text-immich-dark-fg font-immich-mono bottom-0">
+          <div class="absolute end-5 top-[-16px] text-[12px] dark:text-immich-dark-fg font-immich-mono">
             {segment.year}
           </div>
         {/if}
