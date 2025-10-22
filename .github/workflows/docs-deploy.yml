@@ -114,6 +114,11 @@ jobs:
       actions: read
       pull-requests: write
     if: ${{ fromJson(needs.checks.outputs.artifact).found && fromJson(needs.checks.outputs.parameters).shouldDeploy }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_STATE_POSTGRES_CONN_STR: ${{ secrets.TF_STATE_POSTGRES_CONN_STR }}
+      TG_NON_INTERACTIVE: 'true'
     steps:
       - id: token
         uses: immich-app/devtools/actions/create-workflow-token@da177fa133657503ddb7503f8ba53dccefec5da1 # create-workflow-token-action-v1.0.0
@@ -167,10 +172,6 @@ jobs:
         env:
           TF_VAR_prefix_name: ${{ steps.parameters.outputs.name}}
           TF_VAR_prefix_event_type: ${{ steps.parameters.outputs.event }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          TF_STATE_POSTGRES_CONN_STR: ${{ secrets.TF_STATE_POSTGRES_CONN_STR }}
-          TG_NON_INTERACTIVE: 'true'
         working-directory: 'deployment/modules/cloudflare/docs'
         run: 'mise run tf apply'
 
@@ -179,10 +180,6 @@ jobs:
         env:
           TF_VAR_prefix_name: ${{ steps.parameters.outputs.name}}
           TF_VAR_prefix_event_type: ${{ steps.parameters.outputs.event }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          TF_STATE_POSTGRES_CONN_STR: ${{ secrets.TF_STATE_POSTGRES_CONN_STR }}
-          TG_NON_INTERACTIVE: 'true'
         working-directory: 'deployment/modules/cloudflare/docs'
         run: 'mise run tf output -- -json'
 
@@ -210,9 +207,6 @@ jobs:
         if: ${{ steps.parameters.outputs.event == 'release' }}
         env:
           TF_VAR_prefix_name: ${{ steps.parameters.outputs.name}}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          TF_STATE_POSTGRES_CONN_STR: ${{ secrets.TF_STATE_POSTGRES_CONN_STR }}
         working-directory: 'deployment/modules/cloudflare/docs-release'
         run: 'mise run tf apply'
 
